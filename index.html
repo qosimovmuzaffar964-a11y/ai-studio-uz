@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="uz">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#090d1b">
+<title>AI STUDIO UZ</title>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#090d1b;color:#eef2ff;font-family:Arial,sans-serif}
+header{padding:22px 16px;background:linear-gradient(120deg,#151b38,#24205a);border-bottom:1px solid #343b65}
+header h1{margin:0;font-size:25px;letter-spacing:1px}
+header p{margin:8px 0 0;color:#b7c2e8;font-size:13px}
+main{max-width:850px;margin:auto;padding:16px}
+.card{background:#121a30;border:1px solid #293657;border-radius:15px;padding:16px;margin-bottom:15px}
+h2{font-size:18px;margin:0 0 14px;color:#c9c8ff}
+label{display:block;margin:13px 0 6px;color:#cbd5ef;font-size:13px}
+input,select,textarea{width:100%;padding:12px;border-radius:9px;border:1px solid #394766;background:#0b1224;color:white;font-size:15px}
+textarea{min-height:90px;resize:vertical}
+button{border:0;border-radius:9px;padding:12px 15px;background:#6558e8;color:white;font-weight:bold;font-size:14px;margin:8px 5px 0 0}
+button.secondary{background:#263653}
+button.green{background:#16865e}
+button:active{opacity:.75}
+.grid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.small{font-size:12px;color:#aab6d4;line-height:1.5}
+.result{white-space:pre-wrap;background:#0a1121;border:1px solid #2b3857;padding:13px;border-radius:10px;font-size:13px;line-height:1.6;overflow-wrap:anywhere}
+.scene{border:1px solid #344365;border-radius:10px;padding:12px;margin:10px 0;background:#0d1529}
+.scene h3{font-size:14px;color:#b9b5ff;margin:0 0 8px}
+.badge{display:inline-block;background:#252d52;color:#c9c8ff;border-radius:20px;padding:5px 9px;font-size:11px;margin:3px}
+footer{text-align:center;padding:20px;color:#7f8bab;font-size:12px}
+hr{border:0;border-top:1px solid #293657;margin:15px 0}
+@media(max-width:500px){.grid{grid-template-columns:1fr}header h1{font-size:22px}}
+</style>
+</head>
+<body>
+<header>
+  <h1>✦ AI STUDIO UZ</h1>
+  <p>AI video yaratish studiyasi · True Crime · News · Cinema · History</p>
+</header>
+
+<main>
+  <div class="card">
+    <h2>🎬 Yangi video loyihasi</h2>
+    <label>Video mavzusi</label>
+    <textarea id="topic" placeholder="Masalan: The mysterious disappearance of..."></textarea>
+
+    <div class="grid">
+      <div>
+        <label>Yo‘nalish</label>
+        <select id="category">
+          <option>True Crime — Haqiqiy jinoyatlar</option>
+          <option>American News — Amerika yangiliklari</option>
+          <option>Cinema — Kino va hikoyalar</option>
+          <option>History — Tarix</option>
+        </select>
+      </div>
+      <div>
+        <label>Video tili</label>
+        <select id="language">
+          <option value="English">English</option>
+          <option value="Uzbek">O‘zbekcha</option>
+          <option value="Russian">Русский</option>
+        </select>
+      </div>
+      <div>
+        <label>Video davomiyligi</label>
+        <select id="duration">
+          <option value="3">3 daqiqa</option>
+          <option value="5">5 daqiqa</option>
+          <option value="10" selected>10 daqiqa</option>
+          <option value="15">15 daqiqa</option>
+          <option value="20">20 daqiqa</option>
+        </select>
+      </div>
+      <div>
+        <label>Video formati</label>
+        <select id="format">
+          <option value="16:9">16:9 — YouTube uzun video</option>
+          <option value="9:16">9:16 — Shorts</option>
+        </select>
+      </div>
+      <div>
+        <label>Sahnalar soni</label>
+        <select id="scenes">
+          <option>6</option><option>10</option><option selected>15</option>
+          <option>20</option><option>30</option>
+        </select>
+      </div>
+      <div>
+        <label>Vizual uslub</label>
+        <select id="style">
+          <option>Cinematic realistic documentary</option>
+          <option>Photorealistic historical reconstruction</option>
+          <option>Professional news documentary</option>
+          <option>Dark investigative documentary</option>
+        </select>
+      </div>
+    </div>
+    <p class="small">Eslatma: haqiqiy jinoyat va yangiliklarda tasdiqlanmagan voqealarni fakt sifatida ko‘rsatmang. AI tasvirlari arxiv dalili emas.</p>
+    <button class="green" onclick="generate()">✦ Reja va promptlar yaratish</button>
+  </div>
+
+  <div class="card">
+    <h2>📂 Tayyorlangan loyiha</h2>
+    <div id="output" class="small">Avval mavzuni kiriting va “Reja va promptlar yaratish” tugmasini bosing.</div>
+    <button class="secondary" onclick="copyResult()">Nusxa olish</button>
+    <button class="secondary" onclick="downloadResult()">TXT fayl qilib olish</button>
+    <button class="secondary" onclick="saveProject()">Loyihani saqlash</button>
+  </div>
+
+  <div class="card">
+    <h2>💾 Saqlangan loyihalar</h2>
+    <div id="saved" class="small">Hozircha saqlangan loyiha yo‘q.</div>
+  </div>
+
+  <div class="card">
+    <h2>⚡ Google Flow kredit hisoblagichi</h2>
+    <div class="grid">
+      <div>
+        <label>Kunlik kredit qoldig‘i</label>
+        <input id="daily" type="number" value="50" min="0">
+      </div>
+      <div>
+        <label>Oylik kredit qoldig‘i</label>
+        <input id="monthly" type="number" value="1000" min="0">
+      </div>
+    </div>
+    <label>Sarflangan kredit</label>
+    <input id="spent" type="number" value="0" min="0">
+    <button onclick="updateCredits()">Hisoblash</button>
+    <div id="creditResult" class="result">Kredit ma’lumotlarini kiriting.</div>
+    <p class="small">Bu hisoblagich qo‘lda yuritiladi. Flow hisobingizga bevosita ulanmagan.</p>
+  </div>
+
+  <div class="card">
+    <h2>🧰 Keyingi imkoniyatlar</h2>
+    <span class="badge">AI ssenariy</span>
+    <span class="badge">Sahna promptlari</span>
+    <span class="badge">Ovoz va subtitr</span>
+    <span class="badge">Video montaj</span>
+    <span class="badge">Thumbnail</span>
+    <span class="badge">MP4 eksport</span>
+    <p class="small">Bu imkoniyatlar bosqichma-bosqich qo‘shiladi. Hozirgi versiya ssenariy rejasi va promptlar tayyorlaydi.</p>
+  </div>
+</main>
+<footer>AI STUDIO UZ · Birinchi versiya</footer>
+
+<script>
+let currentText="";
+let currentProject=null;
+
+function generate(){
+ const topic=document.getElementById("topic").value.trim();
+ if(!topic){alert("Avval video mavzusini yozing.");return;}
+ const category=document.getElementById("category").value;
+ const language=document.getElementById("language").value;
+ const duration=document.getElementById("duration").value;
+ const format=document.getElementById("format").value;
+ const count=Number(document.getElementById("scenes").value);
+ const style=document.getElementById("style").value;
+
+ let intro=`AI STUDIO UZ — VIDEO LOYIHASI
+Mavzu: ${topic}
+Yo‘nalish: ${category}
+Til: ${language}
+Davomiylik: ${duration} daqiqa
+Format: ${format}
+Vizual uslub: ${style}
+
+MUHIM: Faktlarni ishonchli manbalar bilan tekshiring. Quyidagi sahna matnlari ishlab chiqish uchun shablon; ular mustaqil ravishda tarixiy yoki jinoyat faktlarini tasdiqlamaydi.
+
+VIDEO KIRISHI:
+Tomoshabinni qiziqtiradigan kuchli savol yoki tasdiqlangan muhim fakt bilan boshlang.
+Asosiy mavzuni qisqa tanishtiring.
+`;
+ let sections=[intro];
+ let sceneNames=["Kuchli kirish va asosiy savol","Vaqt va joy haqida ma’lumot","Asosiy qahramonlar yoki ishtirokchilar","Voqealardan oldingi vaziyat","Muhim voqea yoki muammo","Dalillar va tasdiqlangan ma’lumotlar","Tergov yoki izlanish jarayoni","Guvohlar va manbalar","Qarama-qarshi fikrlar","Yangi ma’lumotlar","Voqealar rivoji","Muhim burilish","Natijalar","Ochiq qolgan savollar","Xulosa va tomoshabinga murojaat"];
+ for(let i=0;i<count;i++){
+  let name=sceneNames[i%sceneNames.length];
+  let scene=`\n\nSAHNA ${i+1}: ${name.toUpperCase()}
+NARRATOR (${language}):
+[Bu sahnada mavzuga oid tekshirilgan ma’lumotlarni sodda va qiziqarli tarzda bayon qiling.]
+
+IMAGE PROMPT (English):
+${style}, ${topic}, scene ${i+1}, realistic documentary composition, natural lighting, detailed environment, respectful presentation, no text, no logos, 16:9.
+
+VIDEO PROMPT (English):
+Create a subtle cinematic documentary shot based on the scene. Slow camera movement, gentle push-in or pan, realistic natural motion, consistent lighting, no text, no music.
+
+UZBEKCHA ESLATMA:
+Bu sahna uchun kerakli faktlarni tekshiring. Tasvir tarixiy qayta tiklash bo‘lsa, uni haqiqiy arxiv tasviri deb ko‘rsatmang.
+`;
+  sections.push(scene);
+ }
+ sections.push(`\n\nYAKUNIY TEKSHIRUV:
+1. Sana, joy, ismlar va raqamlarni manbalar bilan tekshiring.
+2. Taxminni fakt sifatida aytmang.
+3. AI qayta tiklash tasvirlarini arxiv dalili sifatida ko‘rsatmang.
+4. Musiqa qo‘shilmaydi; ovoz va zarur tabiiy tovushlardan foydalaning.
+5. Har bir sahna uchun narrator matnini alohida tayyorlang.`);
+ currentText=sections.join("");
+ currentProject={topic,category,language,duration,format,count,style,text:currentText};
+ document.getElementById("output").innerHTML=
+ `<div class="result"></div><p class="small">Reja tayyor. To‘liq matnni nusxalashingiz yoki TXT fayl qilib olishingiz mumkin.</p>`;
+ document.querySelector("#output .result").textContent=currentText;
+}
+
+function copyResult(){
+ if(!currentText){alert("Avval loyiha yarating.");return;}
+ if(navigator.clipboard && navigator.clipboard.writeText){
+  navigator.clipboard.writeText(currentText).then(()=>alert("Matn nusxalandi."));
+ }else{alert("Brauzeringiz nusxa olishga ruxsat bermadi. TXT fayl qilib oling.");}
+}
+function downloadResult(){
+ if(!currentText){alert("Avval loyiha yarating.");return;}
+ let blob=new Blob([currentText],{type:"text/plain;charset=utf-8"});
+ let a=document.createElement("a");
+ a.href=URL.createObjectURL(blob);
+ a.download="AI-STUDIO-UZ-loyiha.txt";
+ a.click();
+ URL.revokeObjectURL(a.href);
+}
+function saveProject(){
+ if(!currentProject){alert("Avval loyiha yarating.");return;}
+ let items=JSON.parse(localStorage.getItem("aistudio_projects")||"[]");
+ items.unshift({...currentProject,date:new Date().toLocaleString("uz-UZ")});
+ localStorage.setItem("aistudio_projects",JSON.stringify(items.slice(0,20)));
+ showSaved();
+ alert("Loyiha ushbu qurilmada saqlandi.");
+}
+function showSaved(){
+ let items=JSON.parse(localStorage.getItem("aistudio_projects")||"[]");
+ let el=document.getElementById("saved");
+ if(!items.length){el.textContent="Hozircha saqlangan loyiha yo‘q.";return;}
+ el.innerHTML="";
+ items.forEach((p,i)=>{
+  let div=document.createElement("div");
+  div.className="scene";
+  let title=document.createElement("b");
+  title.textContent=p.topic;
+  let info=document.createElement("p");
+  info.className="small";
+  info.textContent=p.category+" · "+p.duration+" daqiqa · "+p.date;
+  let btn=document.createElement("button");
+  btn.className="secondary";
+  btn.textContent="Loyihani ochish";
+  btn.onclick=()=>{currentText=p.text;currentProject=p;document.getElementById("output").innerHTML='<div class="result"></div>';document.querySelector("#output .result").textContent=currentText;window.scrollTo(0,0);};
+  div.append(title,info,btn);
+  el.appendChild(div);
+ });
+}
+function updateCredits(){
+ let d=Number(document.getElementById("daily").value)||0;
+ let m=Number(document.getElementById("monthly").value)||0;
+ let s=Number(document.getElementById("spent").value)||0;
+ document.getElementById("creditResult").textContent=
+ `Kunlik kiritilgan qoldiq: ${d}\nOylik kiritilgan qoldiq: ${m}\nKiritilgan sarf: ${s}\nEslatma: kunlik va oylik kreditlar alohida hisoblanadi. Haqiqiy qoldiqni Google Flow ichidan tekshiring.`;
+}
+showSaved();
+updateCredits();
+</script>
+</body>
+</html>
